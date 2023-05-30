@@ -18,7 +18,7 @@ WITH REGARD TO THIS SOFTWARE.
 #define VER 16
 #define PAD 2
 #define VOICES 16
-#define DEVICE 0
+/*#define DEVICE 0*/
 
 #define SZ (HOR * VER * 16)
 #define CLIPSZ (HOR * VER) + VER + 1
@@ -365,16 +365,15 @@ runmidi(void)
 }
 
 void
-initmidi(void)
+initmidi(Uint8 device)
 {
-	int i;
-	Pm_Initialize();
+	Uint8 i, id = device % Pm_CountDevices();
 	for(i = 0; i < Pm_CountDevices(); ++i)
 		printf("Device #%d -> %s%s\n",
 			i,
 			Pm_GetDeviceInfo(i)->name,
-			i == DEVICE ? "[x]" : "[ ]");
-	Pm_OpenOutput(&midi, DEVICE, NULL, 128, 0, NULL, 1);
+			i == device ? "[x]" : "[ ]");
+	Pm_OpenOutput(&midi, device, NULL, 128, 0, NULL, 1);
 }
 
 #pragma mark - LIBRARY
@@ -1292,7 +1291,7 @@ init(void)
 	for(i = 0; i < HEIGHT; i++)
 		for(j = 0; j < WIDTH; j++)
 			pixels[i * WIDTH + j] = theme[0];
-	initmidi();
+	/*initmidi();*/
 	return 1;
 }
 
@@ -1300,8 +1299,13 @@ int
 main(int argc, char *argv[])
 {
 	Uint8 tick = 0;
+	Uint8 device = argc <= 1 ? 0 : atoi(argv[2]);
 	if(!init())
 		return error("Init", "Failure");
+	Pm_Initialize();
+	if(Pm_CountDevices() < 1 || device > Pm_CountDevices() - 1)
+		return error("Midi", "Failure");
+	initmidi(device);
 	if(argc > 1) {
 		if(!opendoc(&doc, argv[1]))
 			makedoc(&doc, argv[1]);
