@@ -3,7 +3,7 @@
 #include <portmidi.h>
 #include <porttime.h>
 
-/* 
+/*
 Copyright (c) 2020 Devine Lu Linvega
 
 Permission to use, copy, modify, and distribute this software for any
@@ -14,11 +14,12 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 WITH REGARD TO THIS SOFTWARE.
 */
 
+// Modified by Winter
+
 #define HOR 32
 #define VER 16
 #define PAD 2
 #define VOICES 16
-/*#define DEVICE 0*/
 
 #define SZ (HOR * VER * 16)
 #define CLIPSZ (HOR * VER) + VER + 1
@@ -57,9 +58,9 @@ int BPM = 128, DOWN = 0, ZOOM = 2, PAUSE = 0, GUIDES = 1, MODE = 0;
 Uint32 theme[] = {
 	0x000000,
 	0xFFFFFF,
-	0x72DEC2,
-	0x666666,
-	0xffb545};
+    0x72DEC2,
+    0x666666,
+    0xFFB545};
 
 Uint8 icons[][8] = {
 	{0x00, 0x00, 0x10, 0x38, 0x7c, 0x38, 0x10, 0x00}, /* play */
@@ -365,9 +366,9 @@ runmidi(void)
 }
 
 void
-initmidi(Uint8 device)
+initmidi(int device)
 {
-	Uint8 i, id = device % Pm_CountDevices();
+	int i, id = device % Pm_CountDevices();
 	for(i = 0; i < Pm_CountDevices(); ++i)
 		printf("Device #%d -> %s%s\n",
 			i,
@@ -912,6 +913,7 @@ drawui(Uint32 *dst)
 	/* generics */
 	drawicon(dst, 15 * 8, bottom, icons[GUIDES ? 10 : 9], GUIDES ? 1 : 2, 0);
 	drawicon(dst, (HOR - 1) * 8, bottom, icons[11], doc.unsaved ? 2 : 3, 0);
+    drawicon(dst, 18 * 8, bottom, font[65], 1, 0);
 }
 
 void
@@ -1299,14 +1301,14 @@ int
 main(int argc, char *argv[])
 {
 	Uint8 tick = 0;
-	Uint8 device = argc <= 1 ? 0 : atoi(argv[2]);
+	int device = argc <= 1 ? 0 : atoi(argv[2]);
 	if(!init())
 		return error("Init", "Failure");
 	Pm_Initialize();
 	if(Pm_CountDevices() < 1 || device > Pm_CountDevices() - 1)
 		return error("Midi", "Failure");
 	initmidi(device);
-	if(argc > 1) {
+    if(argc > 1) {
 		if(!opendoc(&doc, argv[1]))
 			makedoc(&doc, argv[1]);
 	} else
