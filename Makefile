@@ -1,14 +1,14 @@
 CC=gcc
-NAME=orca
+CFLAGS=-Wall
+LDFLAGS=-lSDL2 -lportmidi
 
-orca: orca.o
-	$(CC) -o orca orca.o -lSDL2 -lportmidi
+SRC=src
+OUT=orca
 
-orca.o: orca.c
-	$(CC) -c orca.c
+all: $(OUT)
 
-install:
-	install $(NAME) /usr/local/bin
+$(OUT): $(SRC)/*.c
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 
-uninstall:
-	rm -f /usr/local/bin/$(NAME)
+clean:
+	rm -f $(OUT)

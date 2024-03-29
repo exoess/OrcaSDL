@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+device_list=$(./orca --list-devices)
+
+device_names=()
+device_numbers=()
+
+while IFS= read -r device; do
+	device_names+=("${device/\#[0-9]* - /}")
+	device_numbers+=("$(grep -oP '#\K\d+' <<<"$device")")
+done <<<"$device_list"
+
+selected_device=$(gum choose --cursor.foreground "6" "${device_names[@]}")
+for i in "${!device_names[@]}"; do
+	if [[ "${device_names[$i]}" = "$selected_device" ]]; then
+		./orca -d "${device_numbers[$i]}" $1
+	fi
+done
