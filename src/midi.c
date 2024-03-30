@@ -1,7 +1,9 @@
 #include <SDL2/SDL.h>
 #include <portmidi.h>
 #include <porttime.h>
+#include <stdio.h>
 
+#include "constants.h"
 #include "globals.h"
 #include "midi.h"
 #include "types.h"
@@ -44,12 +46,13 @@ void runmidi(void) {
 }
 
 void initmidi(int device) {
-  int i, id = device % Pm_CountDevices();
+  int i;
+  Pm_Initialize();
   for (i = 0; i < Pm_CountDevices(); ++i) {
     const PmDeviceInfo *device_info = Pm_GetDeviceInfo(i);
     if (device_info->output) {
       printf("#%d - %s (%s)\n", i, device_info->name, i == device ? "*" : " ");
     }
-    Pm_OpenOutput(&midi, device, NULL, 128, 0, NULL, 1);
   }
+  Pm_OpenOutput(&midi, device, NULL, 128, 0, NULL, 1);
 }

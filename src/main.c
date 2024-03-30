@@ -113,7 +113,6 @@ int main(int argc, char *argv[]) {
   Uint8 tick = 0;
   if (!init())
     return error("Init", "Failure");
-  Pm_Initialize();
   if (Pm_CountDevices() < 1 || device > Pm_CountDevices() - 1)
     return error("Midi", "Failure");
   initmidi(device);
